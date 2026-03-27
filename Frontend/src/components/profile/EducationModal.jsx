@@ -14,8 +14,12 @@ export default function EducationModal({ initial, onSave, onClose }) {
 
   const validate = () => {
     const errs = {};
-    if (!form.degree) errs.degree = "Required";
-    if (!form.college) errs.college = "Required";
+    if (!form.degree?.trim()) errs.degree = "Degree is required";
+    if (!form.college?.trim()) errs.college = "College name is required";
+    if (!form.currentlyPursuing) {
+      if (!form.yearOfPassing) errs.yearOfPassing = "Year of passing is required";
+      if (!form.percentage?.trim()) errs.percentage = "Percentage / CGPA is required";
+    }
     return errs;
   };
 
@@ -42,7 +46,7 @@ export default function EducationModal({ initial, onSave, onClose }) {
               {errors.degree && <span className="profile-error">{errors.degree}</span>}
             </div>
             <div className="profile-field">
-              <label className="profile-field__label">College/University <span className="profile-required">*</span></label>
+              <label className="profile-field__label">College / University <span className="profile-required">*</span></label>
               <input className={`profile-input${errors.college ? " profile-input--error" : ""}`} value={form.college} onChange={set("college")} placeholder="Institution name" />
               {errors.college && <span className="profile-error">{errors.college}</span>}
             </div>
@@ -51,12 +55,20 @@ export default function EducationModal({ initial, onSave, onClose }) {
               <input className="profile-input" value={form.specialization} onChange={set("specialization")} placeholder="e.g. Computer Science" />
             </div>
             <div className="profile-field">
-              <label className="profile-field__label">Percentage / CGPA</label>
-              <input className="profile-input" value={form.percentage} onChange={set("percentage")} placeholder="e.g. 8.5 or 85%" />
+              <label className="profile-field__label">
+                Percentage / CGPA
+                {!form.currentlyPursuing && <span className="profile-required"> *</span>}
+              </label>
+              <input className={`profile-input${errors.percentage ? " profile-input--error" : ""}`} value={form.percentage} onChange={set("percentage")} placeholder="e.g. 8.5 or 85%" disabled={form.currentlyPursuing} />
+              {errors.percentage && <span className="profile-error">{errors.percentage}</span>}
             </div>
             <div className="profile-field">
-              <label className="profile-field__label">Year of Passing</label>
-              <input className="profile-input" type="number" min="1990" max="2030" value={form.yearOfPassing} onChange={set("yearOfPassing")} placeholder="2024" disabled={form.currentlyPursuing} />
+              <label className="profile-field__label">
+                Year of Passing
+                {!form.currentlyPursuing && <span className="profile-required"> *</span>}
+              </label>
+              <input className={`profile-input${errors.yearOfPassing ? " profile-input--error" : ""}`} type="number" min="1990" max="2030" value={form.yearOfPassing} onChange={set("yearOfPassing")} placeholder="2024" disabled={form.currentlyPursuing} />
+              {errors.yearOfPassing && <span className="profile-error">{errors.yearOfPassing}</span>}
             </div>
             <div className="profile-field profile-field--checkbox">
               <label className="profile-checkbox-label">

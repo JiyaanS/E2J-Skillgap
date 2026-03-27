@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { X, Plus } from "lucide-react";
 
 const LANG_OPTIONS = ["English","Hindi","Tamil","Telugu","Kannada","Malayalam","Marathi","Bengali","Gujarati","Punjabi","Urdu","French","German","Spanish","Mandarin","Arabic","Japanese"];
+const NOTICE_PERIODS = ["Immediate", "15 days", "1 month", "2 months", "3 months", "More than 3 months"];
 
-export default function StepSkills({ data, onChange }) {
+export default function StepSkills({ data, onChange, errors = {} }) {
   const skills = data.skills || [];
   const languages = data.languages || [];
+  const jobPrefs = data.jobPreferences || {};
   const [skillInput, setSkillInput] = useState("");
   const [newLang, setNewLang] = useState("");
 
@@ -36,6 +38,8 @@ export default function StepSkills({ data, onChange }) {
 
   const removeLang = (idx) => onChange({ languages: languages.filter((_, i) => i !== idx) });
 
+  const setJobPref = (field) => (e) => onChange({ jobPreferences: { ...jobPrefs, [field]: e.target.value } });
+
   return (
     <div className="profile-step">
       <h3 className="profile-step__title">Skills &amp; Languages</h3>
@@ -44,7 +48,7 @@ export default function StepSkills({ data, onChange }) {
         <h4 className="profile-section__heading">Technical / Professional Skills</h4>
         <div className="profile-skill-input-row">
           <input
-            className="profile-input"
+            className={`profile-input${errors.skills ? " profile-input--error" : ""}`}
             value={skillInput}
             onChange={(e) => setSkillInput(e.target.value)}
             onKeyDown={handleSkillKeyDown}
@@ -55,6 +59,7 @@ export default function StepSkills({ data, onChange }) {
             <Plus size={16} /> Add
           </button>
         </div>
+        {errors.skills && <span className="profile-error" role="alert">{errors.skills}</span>}
         {skills.length > 0 && (
           <div className="profile-skill-tags" role="list" aria-label="Added skills">
             {skills.map((skill) => (
@@ -72,7 +77,7 @@ export default function StepSkills({ data, onChange }) {
             ))}
           </div>
         )}
-        {skills.length === 0 && <p className="profile-empty-state">No skills added yet.</p>}
+        {skills.length === 0 && !errors.skills && <p className="profile-empty-state">No skills added yet.</p>}
       </section>
 
       <section className="profile-section">
@@ -125,6 +130,52 @@ export default function StepSkills({ data, onChange }) {
           </div>
         )}
         {languages.length === 0 && <p className="profile-empty-state">No languages added yet.</p>}
+      </section>
+
+      <section className="profile-section">
+        <h4 className="profile-section__heading">Salary &amp; Preferences</h4>
+        <div className="profile-grid-3">
+          <div className="profile-field">
+            <label className="profile-field__label">
+              Current CTC <span className="profile-required">*</span>
+            </label>
+            <input
+              type="text"
+              className={`profile-input${errors.currentCTC ? " profile-input--error" : ""}`}
+              value={jobPrefs.currentCTC || ""}
+              onChange={setJobPref("currentCTC")}
+              placeholder="e.g. 5 LPA or 5,00,000"
+            />
+            {errors.currentCTC && <span className="profile-error" role="alert">{errors.currentCTC}</span>}
+          </div>
+          <div className="profile-field">
+            <label className="profile-field__label">
+              Expected CTC <span className="profile-required">*</span>
+            </label>
+            <input
+              type="text"
+              className={`profile-input${errors.expectedCTC ? " profile-input--error" : ""}`}
+              value={jobPrefs.expectedCTC || ""}
+              onChange={setJobPref("expectedCTC")}
+              placeholder="e.g. 8 LPA or 8,00,000"
+            />
+            {errors.expectedCTC && <span className="profile-error" role="alert">{errors.expectedCTC}</span>}
+          </div>
+          <div className="profile-field">
+            <label className="profile-field__label">
+              Notice Period <span className="profile-required">*</span>
+            </label>
+            <select
+              className={`profile-select${errors.noticePeriod ? " profile-input--error" : ""}`}
+              value={jobPrefs.noticePeriod || ""}
+              onChange={setJobPref("noticePeriod")}
+            >
+              <option value="">Select notice period…</option>
+              {NOTICE_PERIODS.map((n) => <option key={n} value={n}>{n}</option>)}
+            </select>
+            {errors.noticePeriod && <span className="profile-error" role="alert">{errors.noticePeriod}</span>}
+          </div>
+        </div>
       </section>
     </div>
   );

@@ -710,3 +710,48 @@
     flex-direction: column;
   }
 }
+
+/* --- Validation hint in footer --- */
+.profile-validation-hint {
+  font-size: 0.85rem;
+  color: #ef4444;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+/* --- Compact upload zone (for modal) --- */
+.profile-upload-zone--compact {
+  padding: 16px 20px;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
+}
+
+.profile-upload-zone--compact .profile-upload-zone__icon {
+  margin-bottom: 0;
+}
+
+.profile-upload-zone--compact .profile-upload-zone__text {
+  font-size: 0.85rem;
+}
+
+.profile-upload-zone--error {
+  border-color: #ef4444;
+}
+
+/* --- File chip in table --- */
+.profile-file-chip {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(91, 92, 226, 0.08);
+  color: #5B5CE2;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

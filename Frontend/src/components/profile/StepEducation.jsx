@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import EducationModal from "./EducationModal";
+import CertificationModal from "./CertificationModal";
 
 export default function StepEducation({ data, onChange }) {
   const education = data.education || [];
   const certifications = data.certifications || [];
   const [edModal, setEdModal] = useState(null);
+  const [certModal, setCertModal] = useState(null);
 
+  // Education CRUD
   const saveEducation = (item) => {
     if (edModal.mode === "add") {
       onChange({ education: [...education, item] });
@@ -18,12 +21,24 @@ export default function StepEducation({ data, onChange }) {
   };
   const deleteEducation = (idx) => onChange({ education: education.filter((_, i) => i !== idx) });
 
-  const addCert = () => onChange({ certifications: [...certifications, { name: "", issuer: "", year: "" }] });
-  const updateCert = (idx, field, val) => {
-    const updated = certifications.map((c, i) => (i === idx ? { ...c, [field]: val } : c));
-    onChange({ certifications: updated });
+  // Certification CRUD via modal
+  const saveCert = (item) => {
+    if (certModal.mode === "add") {
+      onChange({ certifications: [...certifications, item] });
+    } else {
+      const updated = certifications.map((c, i) => (i === certModal.idx ? item : c));
+      onChange({ certifications: updated });
+    }
+    setCertModal(null);
   };
   const deleteCert = (idx) => onChange({ certifications: certifications.filter((_, i) => i !== idx) });
+
+  const formatDate = (d) => {
+    if (!d) return "—";
+    const [y, m] = d.split("-");
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    return `${months[parseInt(m, 10) - 1] || ""} ${y}`;
+  };
 
   return (
     <div className="profile-step">
@@ -62,8 +77,8 @@ export default function StepEducation({ data, onChange }) {
                     <td>{ed.percentage || "—"}</td>
                     <td>
                       <div className="profile-table-actions">
-                        <button type="button" className="profile-btn-icon" onClick={() => setEdModal({ mode: "edit", idx, initial: ed })} aria-label="Edit"><Pencil size={14} /></button>
-                        <button type="button" className="profile-btn-icon profile-btn-icon--danger" onClick={() => deleteEducation(idx)} aria-label="Delete"><Trash2 size={14} /></button>
+                        <button type="button" className="profile-btn-icon" onClick={() => setEdModal({ mode: "edit", idx, initial: ed })} aria-label="Edit education"><Pencil size={14} /></button>
+                        <button type="button" className="profile-btn-icon profile-btn-icon--danger" onClick={() => deleteEducation(idx)} aria-label="Delete education"><Trash2 size={14} /></button>
                       </div>
                     </td>
                   </tr>
@@ -77,22 +92,43 @@ export default function StepEducation({ data, onChange }) {
       <section className="profile-section">
         <div className="profile-section-header">
           <h4 className="profile-section__heading">Certifications</h4>
-          <button type="button" className="profile-btn-add" onClick={addCert}>
+          <button type="button" className="profile-btn-add" onClick={() => setCertModal({ mode: "add" })}>
             <Plus size={16} /> Add Certification
           </button>
         </div>
         {certifications.length === 0 ? (
-          <p className="profile-empty-state">No certifications added yet.</p>
+          <p className="profile-empty-state">No certifications added yet. Click &quot;Add Certification&quot; to start.</p>
         ) : (
-          <div className="profile-cert-list">
-            {certifications.map((cert, idx) => (
-              <div key={idx} className="profile-cert-row">
-                <input className="profile-input" value={cert.name} onChange={(e) => updateCert(idx, "name", e.target.value)} placeholder="Certification name" />
-                <input className="profile-input" value={cert.issuer} onChange={(e) => updateCert(idx, "issuer", e.target.value)} placeholder="Issuing organization" />
-                <input className="profile-input" value={cert.year} onChange={(e) => updateCert(idx, "year", e.target.value)} placeholder="Year" style={{ maxWidth: 100 }} />
-                <button type="button" className="profile-btn-icon profile-btn-icon--danger" onClick={() => deleteCert(idx)} aria-label="Delete certification"><Trash2 size={16} /></button>
-              </div>
-            ))}
+          <div className="profile-table-wrap">
+            <table className="profile-table" aria-label="Certifications">
+              <thead>
+                <tr>
+                  <th>Certificate ID</th>
+                  <th>Name</th>
+                  <th>Issuing Authority</th>
+                  <th>Valid Till</th>
+                  <th>Document</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {certifications.map((cert, idx) => (
+                  <tr key={idx}>
+                    <td>{cert.certId || "—"}</td>
+                    <td>{cert.name}</td>
+                    <td>{cert.issuer || "—"}</td>
+                    <td>{formatDate(cert.validTill)}</td>
+                    <td>{cert.file?.name ? <span className="profile-file-chip">{cert.file.name}</span> : "—"}</td>
+                    <td>
+                      <div className="profile-table-actions">
+                        <button type="button" className="profile-btn-icon" onClick={() => setCertModal({ mode: "edit", idx, initial: cert })} aria-label="Edit certification"><Pencil size={14} /></button>
+                        <button type="button" className="profile-btn-icon profile-btn-icon--danger" onClick={() => deleteCert(idx)} aria-label="Delete certification"><Trash2 size={14} /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </section>
@@ -102,6 +138,14 @@ export default function StepEducation({ data, onChange }) {
           initial={edModal.initial}
           onSave={saveEducation}
           onClose={() => setEdModal(null)}
+        />
+      )}
+
+      {certModal && (
+        <CertificationModal
+          initial={certModal.initial}
+          onSave={saveCert}
+          onClose={() => setCertModal(null)}
         />
       )}
     </div>

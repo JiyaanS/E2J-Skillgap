@@ -37,9 +37,51 @@ const EMPTY_PROFILE = {
   education: [],
   certifications: [],
   work: [],
+  experienceCategory: "",
+  totalExperience: "",
   skills: [],
   languages: [],
+  jobPreferences: {},
 };
+
+// Returns an object of field errors for the given step
+function validateStep(stepIndex, data) {
+  const errors = {};
+
+  if (stepIndex === 1) {
+    if (!data.title) errors.title = "Title is required";
+    if (!data.firstName?.trim()) errors.firstName = "First name is required";
+    if (!data.lastName?.trim()) errors.lastName = "Last name is required";
+    if (!data.dob) errors.dob = "Date of birth is required";
+    if (!data.gender) errors.gender = "Gender is required";
+    if (!data.nationality?.trim()) errors.nationality = "Nationality is required";
+    const digits = (data.mobilePrimary || "").replace(/\D/g, "");
+    if (!digits) {
+      errors.mobilePrimary = "Mobile number is required";
+    } else if (digits.length !== 10) {
+      errors.mobilePrimary = "Enter a valid 10-digit mobile number";
+    }
+    if (!data.presentAddress?.line1?.trim()) errors["address.line1"] = "Address line 1 is required";
+    if (!data.presentAddress?.city?.trim()) errors["address.city"] = "City is required";
+    if (!data.presentAddress?.state?.trim()) errors["address.state"] = "State is required";
+    if (!data.presentAddress?.country?.trim()) errors["address.country"] = "Country is required";
+    if (!data.presentAddress?.pincode?.trim()) errors["address.pincode"] = "Pincode is required";
+  }
+
+  if (stepIndex === 3) {
+    if (!data.experienceCategory?.trim()) errors.experienceCategory = "Experience category is required";
+    if (!data.totalExperience?.trim()) errors.totalExperience = "Total experience is required";
+  }
+
+  if (stepIndex === 4) {
+    if (!data.skills?.length) errors.skills = "Add at least one skill";
+    if (!data.jobPreferences?.currentCTC?.trim()) errors.currentCTC = "Current CTC is required";
+    if (!data.jobPreferences?.expectedCTC?.trim()) errors.expectedCTC = "Expected CTC is required";
+    if (!data.jobPreferences?.noticePeriod?.trim()) errors.noticePeriod = "Notice period is required";
+  }
+
+  return errors;
+}
 
 function ProfileStepper({ currentStep, completedSteps }) {
   return (
@@ -79,6 +121,8 @@ export default function Profile() {
   const [successMsg, setSuccessMsg] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
   const [isExisting, setIsExisting] = useState(false);
+  // showErrors: whether to display validation errors (triggered on Next/Submit attempt)
+  const [showErrors, setShowErrors] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -107,6 +151,10 @@ export default function Profile() {
     setProfileData((prev) => ({ ...prev, ...changes }));
   }, []);
 
+  // Current step's validation errors
+  const currentErrors = validateStep(step, profileData);
+  const isStepValid = Object.keys(currentErrors).length === 0;
+
   const handleSaveDraft = async () => {
     setSaving(true);
     setError("");
@@ -122,6 +170,11 @@ export default function Profile() {
   };
 
   const handleNext = () => {
+    if (!isStepValid) {
+      setShowErrors(true);
+      return;
+    }
+    setShowErrors(false);
     setCompletedSteps((prev) => new Set([...prev, step]));
     if (step < STEPS.length - 1) {
       setStep((s) => s + 1);
@@ -130,11 +183,16 @@ export default function Profile() {
   };
 
   const handleBack = () => {
+    setShowErrors(false);
     setStep((s) => Math.max(s - 1, 0));
     window.scrollTo(0, 0);
   };
 
   const handleSubmit = async () => {
+    if (!isStepValid) {
+      setShowErrors(true);
+      return;
+    }
     setSaving(true);
     setError("");
     try {
@@ -156,8 +214,10 @@ export default function Profile() {
     }
   };
 
+  const activeErrors = showErrors ? currentErrors : {};
+
   const renderStep = () => {
-    const props = { data: profileData, onChange: updateProfileData };
+    const props = { data: profileData, onChange: updateProfileData, errors: activeErrors };
     switch (step) {
       case 0: return <StepResume {...props} />;
       case 1: return <StepPersonal {...props} />;
@@ -240,6 +300,11 @@ export default function Profile() {
             )}
           </div>
           <div className="profile-nav-footer__right">
+            {showErrors && !isStepValid && (
+              <span className="profile-validation-hint" role="alert">
+                Please fill in all required fields
+              </span>
+            )}
             <button type="button" className="profile-btn-secondary" onClick={handleSaveDraft} disabled={saving}>
               {saving ? "Saving…" : "Save as Draft"}
             </button>
