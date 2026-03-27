@@ -62,7 +62,7 @@ export default function CreatePassword() {
       <h1>Create New Password</h1>
       <p>Set a strong password to secure your account.</p>
 
-      {error && <div className="status-message error">{error}</div>}
+      {error && <div className="status-message error" role="alert">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         <InputField

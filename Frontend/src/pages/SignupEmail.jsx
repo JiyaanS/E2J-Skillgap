@@ -34,7 +34,7 @@ export default function SignupEmail() {
     <AuthLayout>
       <h1>Student Registration</h1>
       <p>Enter your registered email ID to get started.</p>
-      {error && <div className="status-message error">{error}</div>}
+      {error && <div className="status-message error" role="alert">{error}</div>}
 
       <form onSubmit={handleSubmit} noValidate>
         <InputField

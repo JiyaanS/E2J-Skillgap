@@ -88,14 +88,14 @@ export default function VerifyOTP() {
         <strong>{email}</strong>
       </p>
 
-      {error && <div className="status-message error">{error}</div>}
-      {status && <div className="status-message success">{status}</div>}
+      {error && <div className="status-message error" role="alert">{error}</div>}
+      {status && <div className="status-message success" role="status">{status}</div>}
 
       <form onSubmit={handleSubmit}>
         <OTPInput value={otp} onChange={setOtp} disabled={loading} />
 
         <div className="otp-footer">
-          <div>Resend code in {formattedTime}</div>
+          <div aria-live="polite" aria-atomic="true">Resend code in {formattedTime}</div>
           <button type="button" onClick={handleResend} disabled={timer > 0 || loading}>
             Resend OTP
           </button>

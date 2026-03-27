@@ -45,7 +45,7 @@ export default function Login() {
       <h1>Student Sign In</h1>
       <p>Enter your registered email and password to continue.</p>
 
-      {error && <div className="status-message error">{error}</div>}
+      {error && <div className="status-message error" role="alert">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         <InputField

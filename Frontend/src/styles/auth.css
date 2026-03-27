@@ -68,6 +68,16 @@ a {
   line-height: 1.5;
 }
 
+.left-content blockquote {
+  margin: 0 0 0.5rem;
+  padding: 0;
+  font-style: italic;
+}
+
+.left-content cite {
+  font-style: normal;
+}
+
 .left-content strong {
   display: block;
   margin-top: 1rem;
@@ -150,6 +160,15 @@ a {
   box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
 }
 
+.form-input:focus-visible {
+  outline: 2px solid var(--primary-end);
+  outline-offset: 2px;
+}
+
+.form-input--error {
+  border-color: var(--danger);
+}
+
 .button {
   width: 100%;
   padding: 0.95rem;
@@ -166,6 +185,11 @@ a {
 .button:hover {
   transform: translateY(-1px);
   box-shadow: 0 14px 22px rgba(79, 70, 229, 0.25);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--primary-end);
+  outline-offset: 3px;
 }
 
 .button:disabled {

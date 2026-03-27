@@ -59,7 +59,12 @@ export default function OTPInput({ length = 6, value = "", onChange, disabled })
   };
 
   return (
-    <div className="otp-grid" onPaste={handlePaste}>
+    <div
+      className="otp-grid"
+      onPaste={handlePaste}
+      role="group"
+      aria-label="One-time passcode input"
+    >
       {values.map((digit, index) => (
         <input
           key={index}
@@ -73,6 +78,7 @@ export default function OTPInput({ length = 6, value = "", onChange, disabled })
           ref={(el) => (inputsRef.current[index] = el)}
           className="otp-input"
           autoComplete="one-time-code"
+          aria-label={`Digit ${index + 1} of ${length}`}
         />
       ))}
     </div>

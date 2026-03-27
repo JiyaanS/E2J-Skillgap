@@ -36,20 +36,20 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="dashboard-sidebar" style={sidebarStyle}>
+    <aside className="dashboard-sidebar" style={sidebarStyle} aria-label="Application sidebar">
       <div className="sidebar-logo">
-        <div className="sidebar-logo__icon">
+        <div className="sidebar-logo__icon" aria-hidden="true">
           <LayoutDashboard size={20} />
         </div>
         <span className="sidebar-logo__text">HH</span>
       </div>
 
-      <nav className="sidebar-nav">
+      <nav className="sidebar-nav" aria-label="Main navigation">
         {navItems.map((item) => {
           const Icon = item.icon;
           const content = (
             <>
-              <div className="sidebar-icon-wrapper">
+              <div className="sidebar-icon-wrapper" aria-hidden="true">
                 <Icon size={18} />
               </div>
               <span className="sidebar-label">{item.label}</span>
@@ -58,7 +58,13 @@ export default function Sidebar() {
 
           if (!item.to) {
             return (
-              <div key={item.key} className="sidebar-item disabled">
+              <div
+                key={item.key}
+                className="sidebar-item disabled"
+                role="link"
+                aria-disabled="true"
+                tabIndex={-1}
+              >
                 {content}
               </div>
             );
@@ -80,15 +86,20 @@ export default function Sidebar() {
       </nav>
 
       <div className="sidebar-bottom">
-        <div className="sidebar-item disabled">
-          <div className="sidebar-icon-wrapper">
+        <div
+          className="sidebar-item disabled"
+          role="link"
+          aria-disabled="true"
+          tabIndex={-1}
+        >
+          <div className="sidebar-icon-wrapper" aria-hidden="true">
             <Settings size={18} />
           </div>
           <span className="sidebar-label">Setting</span>
         </div>
 
         <button className="sidebar-item sidebar-logout" type="button" onClick={handleLogout}>
-          <div className="sidebar-icon-wrapper">
+          <div className="sidebar-icon-wrapper" aria-hidden="true">
             <LogOut size={18} />
           </div>
           <span className="sidebar-label">Logout</span>

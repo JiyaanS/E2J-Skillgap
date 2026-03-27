@@ -35,7 +35,7 @@ export default function ForgotPassword() {
       <h1>Forgot Password</h1>
       <p>Enter your email to receive a password reset OTP.</p>
 
-      {error && <div className="status-message error">{error}</div>}
+      {error && <div className="status-message error" role="alert">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         <InputField
