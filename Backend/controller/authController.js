@@ -174,8 +174,6 @@ exports.loginUser = async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
 
-    console.log("Entered password:", password);
-    console.log("Stored hash:", user.password);
     console.log("Match result:", isMatch);
 
     if (!isMatch) {
@@ -185,14 +183,19 @@ exports.loginUser = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { userId: user._id },
+      { userId: user._id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
+    const InstituteStudent = require("../models/InstituteStudent");
+    const instStudent = await InstituteStudent.findOne({ email });
+    const name = instStudent?.name || "";
+
     res.json({
       message: "Login successful",
-      token
+      token,
+      name,
     });
 
   } catch (error) {

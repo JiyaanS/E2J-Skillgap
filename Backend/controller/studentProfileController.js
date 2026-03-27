@@ -5,6 +5,7 @@ const InstituteStudent = require('../models/InstituteStudent');
 exports.getProfile = async (req, res) => {
   try {
     const email = req.userEmail;
+    if (!email) return res.status(400).json({ message: 'Email not found in token' });
     const profile = await StudentProfile.findOne({ email });
     return res.json({ profile });
   } catch (error) {
@@ -12,14 +13,19 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// POST /profile
+// POST/PUT /profile
 exports.createOrUpdateProfile = async (req, res) => {
   try {
     const email = req.userEmail;
-    const data = req.body;
+    if (!email) return res.status(400).json({ message: 'Email not found in token' });
+    const { isDraft, ...data } = req.body;
+    const updateData = { ...data, email };
+    if (!isDraft) {
+      updateData.profileCompleted = true;
+    }
     const profile = await StudentProfile.findOneAndUpdate(
       { email },
-      { ...data, email, profileCompleted: true },
+      updateData,
       { new: true, upsert: true, setDefaultsOnInsert: true }
     );
     return res.json({ profile });
@@ -32,6 +38,7 @@ exports.createOrUpdateProfile = async (req, res) => {
 exports.prefillProfile = async (req, res) => {
   try {
     const email = req.userEmail;
+    if (!email) return res.status(400).json({ message: 'Email not found in token' });
     const instStudent = await InstituteStudent.findOne({ email });
     if (!instStudent) return res.status(404).json({ message: 'Not found' });
     return res.json({

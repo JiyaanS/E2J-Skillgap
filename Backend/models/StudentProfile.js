@@ -5,24 +5,33 @@ const educationSchema = new mongoose.Schema({
   college: String,
   specialization: String,
   yearOfPassing: String,
-  currentlyPursuing: Boolean,
+  currentlyPursuing: { type: Boolean, default: false },
   percentage: String,
-}, { _id: false });
+  certificate: { url: String, name: String },
+}, { _id: true });
+
+const certificationSchema = new mongoose.Schema({
+  name: String,
+  issuer: String,
+  year: String,
+  file: { url: String, name: String },
+}, { _id: true });
 
 const workSchema = new mongoose.Schema({
   company: String,
+  role: String,
   location: String,
   employmentType: String,
   startDate: String,
   endDate: String,
-  currentlyWorking: Boolean,
-}, { _id: false });
+  currentlyWorking: { type: Boolean, default: false },
+}, { _id: true });
 
 const resumeSchema = new mongoose.Schema({
   url: String,
   name: String,
-  isPrimary: Boolean,
-}, { _id: false });
+  isPrimary: { type: Boolean, default: false },
+}, { _id: true });
 
 const addressSchema = new mongoose.Schema({
   line1: String,
@@ -31,6 +40,29 @@ const addressSchema = new mongoose.Schema({
   state: String,
   country: String,
   pincode: String,
+}, { _id: false });
+
+const languageSchema = new mongoose.Schema({
+  language: String,
+  canRead: { type: Boolean, default: false },
+  canWrite: { type: Boolean, default: false },
+  canSpeak: { type: Boolean, default: false },
+  isNative: { type: Boolean, default: false },
+}, { _id: false });
+
+const socialMediaSchema = new mongoose.Schema({
+  linkedin: String,
+  github: String,
+  portfolio: String,
+  twitter: String,
+}, { _id: false });
+
+const jobPreferencesSchema = new mongoose.Schema({
+  preferredRoles: [String],
+  preferredLocations: [String],
+  preferredJobType: String,
+  noticePeriod: String,
+  expectedSalary: String,
 }, { _id: false });
 
 const studentProfileSchema = new mongoose.Schema({
@@ -51,9 +83,13 @@ const studentProfileSchema = new mongoose.Schema({
   mobileAlternate: String,
   presentAddress: addressSchema,
   permanentAddress: addressSchema,
+  socialMedia: socialMediaSchema,
+  jobPreferences: jobPreferencesSchema,
   education: [educationSchema],
+  certifications: [certificationSchema],
   work: [workSchema],
   skills: [String],
+  languages: [languageSchema],
   profileCompleted: { type: Boolean, default: false },
 }, { timestamps: true });
 

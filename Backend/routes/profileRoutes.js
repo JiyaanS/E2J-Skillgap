@@ -11,6 +11,7 @@ router.use(authMiddleware);
 
 router.get('/me', getProfile);
 router.post('/', createOrUpdateProfile);
+router.put('/', createOrUpdateProfile);
 router.get('/prefill', prefillProfile);
 
 module.exports = router;
